@@ -273,5 +273,38 @@ else if($_SESSION['role']=="ngo") {  ?>
     ?>
 
 </body>
+<?php } 
+else if($_SESSION['role']=="org") {  ?>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="homego.php" class="logo">Food<span style="color: #974de1;">Share</span></a>
+            <div class="nav-links">
+                <a href="ngo_food.php">Food Items</a>
+                <a href="ngo_cart.php">Cart</a>
+                <a href="ngo_orders.php">Orders</a>
+            </div>
+            <div class="user-section">
+                <span>Welcome, <?php echo $_SESSION['username']; ?> Organic Farmer</span>
+                <form action="" method="POST" style="margin: 0;">
+                    <button type="submit" name="logout" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <?php
+    if($_SESSION['action']=="home") {
+        include "ngofood.php";
+    }
+    else if($_SESSION['action']=="ngocart"){
+        include "ngocart.php";
+    }
+    else if($_SESSION['action']=="ngoorders") {
+        include "ngoorders.php";
+    }
+    ?>
+
+</body>
 <?php } ?>
 </html>
