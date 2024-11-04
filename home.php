@@ -167,7 +167,7 @@ if (isset($_POST['logout'])) {
                 <a href="insert_item.php">Add Item</a>
                 <a href="update_item.php">Update Item</a>
                 <a href="delete_item.php">Delete Item</a>
-                <a href="bought_item.php">Bought items</a>
+                <a href="bought_item.php">Donated items</a>
             </div>
             <div class="user-section">
                 <span>Welcome, <?php echo $_SESSION['username']; ?></span>
@@ -295,13 +295,13 @@ else if($_SESSION['role']=="org") {  ?>
 
     <?php
     if($_SESSION['action']=="home") {
-        include "ngofood.php";
+        include "orgfood.php";
     }
     else if($_SESSION['action']=="ngocart"){
         include "ngocart.php";
     }
     else if($_SESSION['action']=="ngoorders") {
-        include "ngoorders.php";
+        include "orders.php";
     }
     ?>
 
