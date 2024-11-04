@@ -171,7 +171,7 @@ $usertype = $user_data['usertype'];
             $order_query = mysqli_query($conn, "
                                                 SELECT *
                                                 FROM orders 
-                                                WHERE userid = $userid AND usertype = $usertype
+                                                WHERE userid = '$userid' AND usertype = '$usertype'
                                             ");
 
             // Display the bought items

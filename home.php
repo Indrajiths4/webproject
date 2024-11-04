@@ -295,13 +295,13 @@ else if($_SESSION['role']=="org") {  ?>
 
     <?php
     if($_SESSION['action']=="home") {
-        include "ngofood.php";
+        include "orgfood.php";
     }
     else if($_SESSION['action']=="ngocart"){
         include "ngocart.php";
     }
     else if($_SESSION['action']=="ngoorders") {
-        include "ngoorders.php";
+        include "orders.php";
     }
     ?>
 
