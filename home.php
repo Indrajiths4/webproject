@@ -256,7 +256,7 @@ else if($_SESSION['role']=="ngo") {  ?>
     </nav>
 
     <?php
-    if($_SESSION['action']=="home") {
+    if($_SESSION['action']=="ngofood") {
         include "ngofood.php";
     }
     else if($_SESSION['action']=="ngocart"){
@@ -266,6 +266,7 @@ else if($_SESSION['role']=="ngo") {  ?>
         include "ngoorders.php";
     }
     ?>
+    
 </body>
 <?php } ?>
 </html>
