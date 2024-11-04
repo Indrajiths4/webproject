@@ -280,7 +280,7 @@ else if($_SESSION['role']=="org") {  ?>
         <div class="navbar-content">
             <a href="homego.php" class="logo">Food<span style="color: #974de1;">Share</span></a>
             <div class="nav-links">
-                <a href="ngo_food.php">Food Items</a>
+                <a href="ngo_food.php">Expired Food Items</a>
                 <a href="ngo_cart.php">Cart</a>
                 <a href="ngo_orders.php">Orders</a>
             </div>
