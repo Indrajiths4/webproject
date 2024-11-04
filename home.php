@@ -156,6 +156,7 @@ if (isset($_POST['logout'])) {
             font-size: 1.2rem;
         }
     </style>
+    
 </head>
 <?php if($_SESSION['role']=="doner") { ?> 
 <body>
@@ -235,7 +236,10 @@ if (isset($_POST['logout'])) {
     }
     ?>
 </body>
+
+
 <?php } 
+
 else if($_SESSION['role']=="ngo") {  ?>
 <body>
     <nav class="navbar">
@@ -266,7 +270,7 @@ else if($_SESSION['role']=="ngo") {  ?>
         include "ngoorders.php";
     }
     ?>
-    
+
 </body>
 <?php } ?>
 </html>
