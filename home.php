@@ -156,6 +156,7 @@ if (isset($_POST['logout'])) {
             font-size: 1.2rem;
         }
     </style>
+    
 </head>
 <?php if($_SESSION['role']=="doner") { ?> 
 <body>
@@ -236,16 +237,19 @@ if (isset($_POST['logout'])) {
     }
     ?>
 </body>
+
+
 <?php } 
+
 else if($_SESSION['role']=="ngo") {  ?>
 <body>
     <nav class="navbar">
         <div class="navbar-content">
             <a href="homego.php" class="logo">Food<span style="color: #974de1;">Share</span></a>
             <div class="nav-links">
-                <a href="insert_item.php">Add Item</a>
-                <a href="update_item.php">Update Item</a>
-                <a href="delete_item.php">Delete Item</a>
+                <a href="ngo_food.php">Food Items</a>
+                <a href="ngo_cart.php">Cart</a>
+                <a href="ngo_orders.php">Orders</a>
             </div>
             <div class="user-section">
                 <span>Welcome, <?php echo $_SESSION['username']; ?> NGO</span>
@@ -257,63 +261,17 @@ else if($_SESSION['role']=="ngo") {  ?>
     </nav>
 
     <?php
-    if($_SESSION['action']=="additem") {
-        include "additem.php";
+    if($_SESSION['action']=="ngofood") {
+        include "ngofood.php";
     }
-    else if($_SESSION['action']=="home"){
-    ?>
-    <div class="container">
-        <h2 style="margin-bottom: 1.5rem;">My Food Items</h2>
-        <div class="items-grid">
-            <?php
-            $conn = mysqli_connect("localhost", "root", "", "webproject");
-            
-            // First get the userid from users table using the session username and password
-            $username = $_SESSION['username'];
-            $password = $_SESSION['password'];
-            $user_query = mysqli_query($conn, "SELECT userid FROM users WHERE username='$username' AND userpassword='$password'");
-            $user_data = mysqli_fetch_assoc($user_query);
-            
-            if ($user_data) {
-                $userid = $user_data['userid'];
-                // Now get all food items for this user
-                $result = mysqli_query($conn, "SELECT * FROM food WHERE userid='$userid' ORDER BY foodid DESC");
-                
-                if (mysqli_num_rows($result) > 0) {
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        ?>
-                        <div class="item-card">
-                            <h3 class="item-name"><?php echo $row['foodname']; ?></h3>
-                            <div class="item-details">
-                                <p>Quantity: <?php echo $row['quantity']; ?></p>
-                                <p>Expiry Date: <?php echo $row['expirydate']; ?></p>
-                            </div>
-                            <div class="item-footer">
-                                <span>Food ID: <?php echo $row['foodid']; ?></span>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                } else {
-                    echo '<div class="no-items">You haven\'t added any food items yet.</div>';
-                }
-            } else {
-                echo '<div class="no-items">Error: User not found.</div>';
-            }
-            
-            mysqli_close($conn);
-            ?>
-        </div>
-    </div>
-    <?php 
+    else if($_SESSION['action']=="ngocart"){
+        include "ngocart.php";
     }
-    else if($_SESSION['action']=="deleteitem") {
-        include "deleteitem.php";
-    }
-    else if($_SESSION['action']=="updateitem") {
-        include "updateitem.php";
+    else if($_SESSION['action']=="ngoorders") {
+        include "ngoorders.php";
     }
     ?>
+
 </body>
 <?php } ?>
 </html>
