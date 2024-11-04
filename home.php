@@ -167,6 +167,7 @@ if (isset($_POST['logout'])) {
                 <a href="insert_item.php">Add Item</a>
                 <a href="update_item.php">Update Item</a>
                 <a href="delete_item.php">Delete Item</a>
+                <a href="bought_item.php">Bought items</a>
             </div>
             <div class="user-section">
                 <span>Welcome, <?php echo $_SESSION['username']; ?></span>
@@ -194,12 +195,10 @@ if (isset($_POST['logout'])) {
             $password = $_SESSION['password'];
             $user_query = mysqli_query($conn, "SELECT userid FROM users WHERE username='$username' AND userpassword='$password'");
             $user_data = mysqli_fetch_assoc($user_query);
-            
             if ($user_data) {
                 $userid = $user_data['userid'];
                 // Now get all food items for this user
                 $result = mysqli_query($conn, "SELECT * FROM food WHERE userid='$userid' ORDER BY foodid DESC");
-                
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         ?>
@@ -221,7 +220,6 @@ if (isset($_POST['logout'])) {
             } else {
                 echo '<div class="no-items">Error: User not found.</div>';
             }
-            
             mysqli_close($conn);
             ?>
         </div>
@@ -233,6 +231,9 @@ if (isset($_POST['logout'])) {
     }
     else if($_SESSION['action']=="updateitem") {
         include "updateitem.php";
+    }
+    else if($_SESSION['action']=="boughtitem") {
+        include "boughtitem.php";
     }
     ?>
 </body>
