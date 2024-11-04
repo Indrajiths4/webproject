@@ -1,6 +1,4 @@
 <?php
-
-
 if (!isset($_SESSION['username'])) {
     include "login.php";
     exit();
@@ -161,57 +159,60 @@ $doner_userid = $user_data['userid'];
     </style>
 </head>
 <body>
-    
-
     <div class="container">
         <h2 style="margin-bottom: 1.5rem;">Bought Items - Doner: <?php echo $username; ?></h2>
         <div class="items-grid">
             <?php
-            // Get all the food items that have been bought by NGOs and Organic Farmers for the current doner
+            // Get all the food items that have been bought by NGOs
             $ngo_query = mysqli_query($conn, "
-    SELECT f.*, u.username AS ngo_username
-    FROM food f
-    JOIN ngos n ON f.foodid = n.foodid
-    JOIN users u ON n.userid = u.userid
-    WHERE f.userid = $doner_userid
-");
+                SELECT o.*, u.username AS buyer_username
+                FROM orders o
+                JOIN users u ON o.userid = u.userid
+                WHERE o.donorid = '$doner_userid'
+                AND o.usertype = 'ngo'
+            ");
 
-$organic_query = mysqli_query($conn, "
-    SELECT f.*, u.username AS organic_username
-    FROM food f
-    JOIN organic o ON f.foodid = o.foodid
-    JOIN users u ON o.userid = u.userid
-    WHERE f.userid = $doner_userid
-");
+            // Get all the food items that have been bought by Organic Farmers
+            $organic_query = mysqli_query($conn, "
+                SELECT o.*, u.username AS buyer_username
+                FROM orders o
+                JOIN users u ON o.userid = u.userid
+                WHERE o.donorid = '$doner_userid'
+                AND o.usertype = 'organic'
+            ");
 
             // Display the bought items
             if (mysqli_num_rows($ngo_query) > 0 || mysqli_num_rows($organic_query) > 0) {
                 echo '<div class="items-grid">';
+                
+                // Display NGO purchases
                 while ($ngo_row = mysqli_fetch_assoc($ngo_query)) {
                     ?>
                     <div class="item-card">
                         <h3 class="item-name"><?php echo $ngo_row['foodname']; ?></h3>
                         <div class="item-details">
                             <p>Quantity: <?php echo $ngo_row['quantity']; ?></p>
-                            <p>Expiry Date: <?php echo $ngo_row['expirydate']; ?></p>
-                            <p>Bought by NGO: <?php echo $ngo_row['ngo_username']; ?></p>
+                            <p>Bought by NGO: <?php echo $ngo_row['buyer_username']; ?></p>
                         </div>
                         <div class="item-footer">
+                            <span>Order ID: <?php echo $ngo_row['orderid']; ?></span>
                             <span>Food ID: <?php echo $ngo_row['foodid']; ?></span>
                         </div>
                     </div>
                     <?php
                 }
+
+                // Display Organic Farmer purchases
                 while ($organic_row = mysqli_fetch_assoc($organic_query)) {
                     ?>
                     <div class="item-card">
                         <h3 class="item-name"><?php echo $organic_row['foodname']; ?></h3>
                         <div class="item-details">
                             <p>Quantity: <?php echo $organic_row['quantity']; ?></p>
-                            <p>Expiry Date: <?php echo $organic_row['expirydate']; ?></p>
-                            <p>Bought by Organic Farmer: <?php echo $organic_row['organic_username']; ?></p>
+                            <p>Bought by Organic Farmer: <?php echo $organic_row['buyer_username']; ?></p>
                         </div>
                         <div class="item-footer">
+                            <span>Order ID: <?php echo $organic_row['orderid']; ?></span>
                             <span>Food ID: <?php echo $organic_row['foodid']; ?></span>
                         </div>
                     </div>
@@ -228,8 +229,3 @@ $organic_query = mysqli_query($conn, "
     </div>
 </body>
 </html>
-
-
-
-
-
