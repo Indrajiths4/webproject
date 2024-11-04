@@ -261,7 +261,7 @@ else if($_SESSION['role']=="ngo") {  ?>
     </nav>
 
     <?php
-    if($_SESSION['action']=="ngofood") {
+    if($_SESSION['action']=="home") {
         include "ngofood.php";
     }
     else if($_SESSION['action']=="ngocart"){
