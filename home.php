@@ -268,7 +268,7 @@ else if($_SESSION['role']=="ngo") {  ?>
         include "ngocart.php";
     }
     else if($_SESSION['action']=="ngoorders") {
-        include "ngoorders.php";
+        include "orders.php";
     }
     ?>
 
