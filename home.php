@@ -244,7 +244,7 @@ if (isset($_POST['rate_item'])) {
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="homego.php" class="logo">Trash<span style="color: #974de1;">Talk</span></a>
+            <a href="homego.php" class="logo">Food<span style="color: #974de1;">Share</span></a>
             <div class="nav-links">
                 <a href="insert_item.php">Add Item</a>
                 <a href="update_item.php">Update Item</a>
