@@ -1,6 +1,4 @@
 <?php
-
-
 if (!isset($_SESSION['username'])) {
     include "login.php";
     exit();
@@ -161,19 +159,19 @@ $usertype = $user_data['usertype'];
     </style>
 </head>
 <body>
-    
-
     <div class="container">
         <h2 style="margin-bottom: 1.5rem;">Bought Items - NGO: <?php echo $username; ?></h2>
         <div class="items-grid">
             <?php
             // Get all the food items that have been bought by NGOs and Organic Farmers for the current doner
+            // Join with users table to get donor names
             $order_query = mysqli_query($conn, "
-                                                SELECT *
-                                                FROM orders 
-                                                WHERE userid = $userid AND usertype = $usertype
-                                            ");
-
+                SELECT o.*, u.username as donor_name
+                FROM orders o
+                JOIN users u ON o.donorid = u.userid
+                WHERE o.userid = '$userid' AND o.usertype = '$usertype'
+            ");
+            
             // Display the bought items
             if (mysqli_num_rows($order_query) > 0) {
                 echo '<div class="items-grid">';
@@ -183,8 +181,7 @@ $usertype = $user_data['usertype'];
                         <h3 class="item-name"><?php echo $ngo_row['foodname']; ?></h3>
                         <div class="item-details">
                             <p>Quantity: <?php echo $ngo_row['quantity']; ?></p>
-                            <p>Expiry Date: <?php echo $ngo_row['expirydate']; ?></p>
-                            <p>Sold by Doner: <?php echo $ngo_row['donorid']; ?></p>
+                            <p>Sold by Donor: <?php echo $ngo_row['donor_name']; ?></p>
                         </div>
                         <div class="item-footer">
                             <span>Food ID: <?php echo $ngo_row['foodid']; ?></span>
@@ -192,7 +189,6 @@ $usertype = $user_data['usertype'];
                     </div>
                     <?php
                 }
-                
                 echo '</div>';
             } else {
                 echo '<div class="no-items">No items have been bought yet.</div>';
