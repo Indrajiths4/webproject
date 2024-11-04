@@ -17,11 +17,9 @@ if (isset($_POST['rate_item'])) {
     $conn = mysqli_connect("localhost", "root", "", "project");
     $itemid = $_POST['itemid'];
     $rating = $_POST['rating'];
-    
     // Get current rating data
     $result = mysqli_query($conn, "SELECT ratingcount, ratingavg, userid FROM items WHERE itemid = $itemid");
     $item = mysqli_fetch_assoc($result);
-    
     // Calculate new rating for the item
     $newCount = $item['ratingcount'] + 1;
     $newAvg = (($item['ratingavg'] * $item['ratingcount']) + $rating) / $newCount;
@@ -58,7 +56,7 @@ if (isset($_POST['rate_item'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoodShare</title>
+    <title>Food Share</title>
     <style>
         * {
             margin: 0;

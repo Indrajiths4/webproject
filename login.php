@@ -249,9 +249,9 @@ if (!isset($_SESSION['username'])):
                     <label for="login-role">Role</label>
                     <select id="login-role" name="role" required>
                         <option value="">Select your role</option>
-                        <option value="user">User</option>
-                        <option value="charity">Charity</option>
+                        <option value="doner">Doner</option>
                         <option value="ngo">NGO</option>
+                        <option value="org">Organic farmers</option>
                     </select>
                 </div>
                 <button type="submit" class="submit-btn" name="login">Login</button>
@@ -278,9 +278,9 @@ if (!isset($_SESSION['username'])):
                     <label for="signup-role">Role</label>
                     <select id="signup-role" name="role" required>
                         <option value="">Select your role</option>
-                        <option value="user">User</option>
-                        <option value="charity">Charity</option>
+                        <option value="doner">Doner</option>
                         <option value="ngo">NGO</option>
+                        <option value="org">Orgranic farmers</option>
                     </select>
                 </div>
                 <button type="submit" class="submit-btn" name="signup">Sign Up</button>
