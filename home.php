@@ -12,51 +12,14 @@ if (isset($_POST['logout'])) {
     exit();
 }
 
-// Handle ratings
-if (isset($_POST['rate_item'])) {
-    $conn = mysqli_connect("localhost", "root", "", "webproject");
-    $itemid = $_POST['itemid'];
-    $rating = $_POST['rating'];
-    // Get current rating data
-    $result = mysqli_query($conn, "SELECT ratingcount, ratingavg, userid FROM items WHERE itemid = $itemid");
-    $item = mysqli_fetch_assoc($result);
-    // Calculate new rating for the item
-    $newCount = $item['ratingcount'] + 1;
-    $newAvg = (($item['ratingavg'] * $item['ratingcount']) + $rating) / $newCount;
-    
-    // Update the items table
-    mysqli_query($conn, "UPDATE items SET ratingcount = $newCount, ratingavg = $newAvg WHERE itemid = $itemid");
-    
-    // Get all items for this user and calculate their new average score
-    $userid = $item['userid'];
-    $userItemsQuery = mysqli_query($conn, "SELECT ratingavg FROM items WHERE userid = '$userid'");
-    
-    $totalRating = 0;
-    $itemCount = 0;
-    
-    while ($userItem = mysqli_fetch_assoc($userItemsQuery)) {
-        $totalRating += $userItem['ratingavg'];
-        $itemCount++;
-    }
-    
-    // Calculate new user score (average of all their items' ratings)
-    $newUserScore = $itemCount > 0 ? $totalRating / $itemCount : 0;
-    
-    // Update the user's score in the users table
-    mysqli_query($conn, "UPDATE users SET userscore = $newUserScore WHERE password = '$userid'");
-    
-    mysqli_close($conn);
-    
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit();
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Share</title>
+    <title>My Food Items - Food Share</title>
     <style>
         * {
             margin: 0;
@@ -170,7 +133,7 @@ if (isset($_POST['rate_item'])) {
             margin-bottom: 1rem;
         }
 
-        .item-description {
+        .item-details {
             color: #636e72;
             margin-bottom: 1rem;
             line-height: 1.5;
@@ -186,65 +149,19 @@ if (isset($_POST['rate_item'])) {
             font-size: 0.9rem;
         }
 
-        .useless-score {
-            font-weight: bold;
-            color: #ff6b6b;
-            margin-left: 1.5rem;
-        }
-
-        .rating-section {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
-        }
-
-        .rating-form {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .rating-select {
-            padding: 0.3rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background: white;
-        }
-
-        .rate-btn {
-            background: #764ba2;
-            color: white;
-            border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .rate-btn:hover {
-            background: #667eea;
-        }
-
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 1rem;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .items-grid {
-                grid-template-columns: 1fr;
-            }
+        .no-items {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 1.2rem;
         }
     </style>
 </head>
+<?php if($_SESSION['role']=="doner") { ?> 
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="homego.php" class="logo">Trash<span style="color: #974de1;">Talk</span></a>
+            <a href="homego.php" class="logo">Food<span style="color: #974de1;">Share</span></a>
             <div class="nav-links">
                 <a href="insert_item.php">Add Item</a>
                 <a href="update_item.php">Update Item</a>
@@ -266,37 +183,44 @@ if (isset($_POST['rate_item'])) {
     else if($_SESSION['action']=="home"){
     ?>
     <div class="container">
+        <h2 style="margin-bottom: 1.5rem;">My Food Items</h2>
         <div class="items-grid">
             <?php
             $conn = mysqli_connect("localhost", "root", "", "webproject");
-            $result = mysqli_query($conn, "SELECT * FROM food WHERE userid!='$_SESSION[password]' ORDER BY ratingavg DESC");
-
-            while ($row = mysqli_fetch_assoc($result)) {
-                ?>
-                <div class="item-card">
-                    <h3 class="item-name"><?php echo $row['itemname']; ?></h3>
-                    <p class="item-description"><?php echo $row['itemdescription']; ?></p>
-                    <div class="item-footer">
-                        <span>Posted by: <?php echo $row['user']; ?></span>
-                        <span class="useless-score">
-                            Useless Score: <?php echo number_format($row['ratingavg'], 1); ?>/10
-                            (<?php echo $row['ratingcount']; ?> ratings)
-                        </span>
-                    </div>
-                    <div class="rating-section">
-                        <form action="" method="POST" class="rating-form">
-                            <input type="hidden" name="itemid" value="<?php echo $row['itemid']; ?>">
-                            <select name="rating" class="rating-select">
-                                <?php for ($i = 1; $i <= 10; $i++) { ?>
-                                    <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                                <?php } ?>
-                            </select>
-                            <button type="submit" name="rate_item" class="rate-btn">Rate</button>
-                        </form>
-                    </div>
-                </div>
-                <?php
+            
+            // First get the userid from users table using the session username and password
+            $username = $_SESSION['username'];
+            $password = $_SESSION['password'];
+            $user_query = mysqli_query($conn, "SELECT userid FROM users WHERE username='$username' AND userpassword='$password'");
+            $user_data = mysqli_fetch_assoc($user_query);
+            
+            if ($user_data) {
+                $userid = $user_data['userid'];
+                // Now get all food items for this user
+                $result = mysqli_query($conn, "SELECT * FROM food WHERE userid='$userid' ORDER BY foodid DESC");
+                
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        ?>
+                        <div class="item-card">
+                            <h3 class="item-name"><?php echo $row['foodname']; ?></h3>
+                            <div class="item-details">
+                                <p>Quantity: <?php echo $row['quantity']; ?></p>
+                                <p>Expiry Date: <?php echo $row['expirydate']; ?></p>
+                            </div>
+                            <div class="item-footer">
+                                <span>Food ID: <?php echo $row['foodid']; ?></span>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                } else {
+                    echo '<div class="no-items">You haven\'t added any food items yet.</div>';
+                }
+            } else {
+                echo '<div class="no-items">Error: User not found.</div>';
             }
+            
             mysqli_close($conn);
             ?>
         </div>
@@ -309,7 +233,86 @@ if (isset($_POST['rate_item'])) {
     else if($_SESSION['action']=="updateitem") {
         include "updateitem.php";
     }
-    
     ?>
 </body>
+<?php } 
+else if($_SESSION['role']=="ngo") {  ?>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="homego.php" class="logo">Food<span style="color: #974de1;">Share</span></a>
+            <div class="nav-links">
+                <a href="insert_item.php">Add Item</a>
+                <a href="update_item.php">Update Item</a>
+                <a href="delete_item.php">Delete Item</a>
+            </div>
+            <div class="user-section">
+                <span>Welcome, <?php echo $_SESSION['username']; ?> NGO</span>
+                <form action="" method="POST" style="margin: 0;">
+                    <button type="submit" name="logout" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <?php
+    if($_SESSION['action']=="additem") {
+        include "additem.php";
+    }
+    else if($_SESSION['action']=="home"){
+    ?>
+    <div class="container">
+        <h2 style="margin-bottom: 1.5rem;">My Food Items</h2>
+        <div class="items-grid">
+            <?php
+            $conn = mysqli_connect("localhost", "root", "", "webproject");
+            
+            // First get the userid from users table using the session username and password
+            $username = $_SESSION['username'];
+            $password = $_SESSION['password'];
+            $user_query = mysqli_query($conn, "SELECT userid FROM users WHERE username='$username' AND userpassword='$password'");
+            $user_data = mysqli_fetch_assoc($user_query);
+            
+            if ($user_data) {
+                $userid = $user_data['userid'];
+                // Now get all food items for this user
+                $result = mysqli_query($conn, "SELECT * FROM food WHERE userid='$userid' ORDER BY foodid DESC");
+                
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        ?>
+                        <div class="item-card">
+                            <h3 class="item-name"><?php echo $row['foodname']; ?></h3>
+                            <div class="item-details">
+                                <p>Quantity: <?php echo $row['quantity']; ?></p>
+                                <p>Expiry Date: <?php echo $row['expirydate']; ?></p>
+                            </div>
+                            <div class="item-footer">
+                                <span>Food ID: <?php echo $row['foodid']; ?></span>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                } else {
+                    echo '<div class="no-items">You haven\'t added any food items yet.</div>';
+                }
+            } else {
+                echo '<div class="no-items">Error: User not found.</div>';
+            }
+            
+            mysqli_close($conn);
+            ?>
+        </div>
+    </div>
+    <?php 
+    }
+    else if($_SESSION['action']=="deleteitem") {
+        include "deleteitem.php";
+    }
+    else if($_SESSION['action']=="updateitem") {
+        include "updateitem.php";
+    }
+    ?>
+</body>
+<?php } ?>
 </html>
