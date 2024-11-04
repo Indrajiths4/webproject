@@ -242,9 +242,9 @@ else if($_SESSION['role']=="ngo") {  ?>
         <div class="navbar-content">
             <a href="homego.php" class="logo">Food<span style="color: #974de1;">Share</span></a>
             <div class="nav-links">
-                <a href="insert_item.php">Add Item</a>
-                <a href="update_item.php">Update Item</a>
-                <a href="delete_item.php">Delete Item</a>
+                <a href="insert_item.php">Food Items</a>
+                <a href="update_item.php">Cart</a>
+                <a href="delete_item.php">Orders</a>
             </div>
             <div class="user-section">
                 <span>Welcome, <?php echo $_SESSION['username']; ?> NGO</span>
