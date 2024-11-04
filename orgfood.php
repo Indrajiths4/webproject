@@ -1,3 +1,46 @@
+<?php
+
+$conn = mysqli_connect("localhost", "root", "", "webproject");
+
+// Handle Add to Cart
+if(isset($_POST['foodid'])) {
+    // Get current user's details from session
+    $username = $_SESSION['username'];
+    $password = $_SESSION['password'];
+
+    // Get userid and usertype
+    $user_query = mysqli_query($conn, "SELECT userid, usertype FROM users WHERE username='$username' AND userpassword='$password'");
+    $user_data = mysqli_fetch_assoc($user_query);
+
+    $userid = $user_data['userid'];
+    $usertype = $user_data['usertype'];
+    $foodid = $_POST['foodid'];
+    
+    // Get food information
+    $food_query = mysqli_query($conn, "SELECT foodid, foodname, quantity, userid as donorid FROM food WHERE foodid='$foodid'");
+    $food_data = mysqli_fetch_assoc($food_query);
+    
+    // Check if already in cart
+    $check_cart = mysqli_query($conn, "SELECT * FROM cart WHERE userid='$userid' AND foodid='$foodid'");
+    
+    if (mysqli_num_rows($check_cart) == 0) {
+        // Add to cart
+        $insert = mysqli_query($conn, "INSERT INTO cart (userid, usertype, foodid, foodname, quantity, donorid) 
+                                     VALUES ('$userid', '$usertype', '{$food_data['foodid']}', 
+                                             '{$food_data['foodname']}', '{$food_data['quantity']}', 
+                                             '{$food_data['donorid']}')");
+        
+        if ($insert) {
+            echo "<script>alert('Added to cart successfully!');</script>";
+        } else {
+            echo "<script>alert('Error adding to cart');</script>";
+        }
+    } else {
+        echo "<script>alert('Item already in cart');</script>";
+    }
+}
+?>
+
 <div class="container">
     <div class="items-grid">
         <?php
@@ -18,12 +61,10 @@
                     <div class="item-footer">
                         <!-- <span>Food ID: <?php echo $row['foodid']; ?></span> -->
                     </div>
-                    <div class="item-actions">
-                        <form action="add_to_cart.php" method="POST">
-                            <input type="hidden" name="foodid" value="<?php echo $row['foodid']; ?>">
-                            <button type="submit" class="add-to-cart-btn">Add to Cart</button>
-                        </form>
-                    </div>
+                    <form method="POST">
+                        <input type="hidden" name="foodid" value="<?php echo $row['foodid']; ?>">
+                        <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+                    </form>
                 </div>
                 <?php
             }
