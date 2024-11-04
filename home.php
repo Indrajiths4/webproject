@@ -14,7 +14,7 @@ if (isset($_POST['logout'])) {
 
 // Handle ratings
 if (isset($_POST['rate_item'])) {
-    $conn = mysqli_connect("localhost", "root", "", "project");
+    $conn = mysqli_connect("localhost", "root", "", "webproject");
     $itemid = $_POST['itemid'];
     $rating = $_POST['rating'];
     // Get current rating data
@@ -269,8 +269,8 @@ if (isset($_POST['rate_item'])) {
     <div class="container">
         <div class="items-grid">
             <?php
-            $conn = mysqli_connect("localhost", "root", "", "project");
-            $result = mysqli_query($conn, "SELECT * FROM items WHERE userid!='$_SESSION[password]' ORDER BY ratingavg DESC");
+            $conn = mysqli_connect("localhost", "root", "", "webproject");
+            $result = mysqli_query($conn, "SELECT * FROM food WHERE userid!='$_SESSION[password]' ORDER BY ratingavg DESC");
 
             while ($row = mysqli_fetch_assoc($result)) {
                 ?>

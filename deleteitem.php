@@ -9,7 +9,7 @@ $error_message = '';
 
 // Handle delete request
 if (isset($_POST['delete_item'])) {
-    $conn = mysqli_connect("localhost", "root", "", "project");
+    $conn = mysqli_connect("localhost", "root", "", "webproject");
     
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
@@ -31,7 +31,7 @@ if (isset($_POST['delete_item'])) {
 }
 
 // Fetch user's items
-$conn = mysqli_connect("localhost", "root", "", "project");
+$conn = mysqli_connect("localhost", "root", "", "webproject");
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
