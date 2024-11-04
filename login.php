@@ -43,7 +43,7 @@ if(isset($_POST['signup'])) {
 if(isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
-    $role = $_POST['role'];  // New role field
+    $role = $_POST['role'];
     $login_query = "SELECT * FROM users WHERE username = '$username' AND userpassword = '$password' AND usertype = '$role'";
     $result = mysqli_query($conn, $login_query);
 
@@ -67,10 +67,9 @@ if (!isset($_SESSION['username'])):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Sign Up</title>
+    <title>Login & Sign Up - Food Share</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
@@ -84,8 +83,24 @@ if (!isset($_SESSION['username'])):
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-image: url('loginpic.jpeg'); /* Make sure to create an 'images' folder and add your background image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
         }
 
         .main-heading {
@@ -101,6 +116,8 @@ if (!isset($_SESSION['username'])):
             text-transform: uppercase;
             transform: skew(-5deg);
             animation: glow 2s ease-in-out infinite alternate;
+            position: relative;
+            z-index: 2;
         }
 
         @keyframes glow {
@@ -120,12 +137,14 @@ if (!isset($_SESSION['username'])):
 
         .container {
             display: flex;
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
             width: 100%;
             max-width: 900px;
             min-height: 500px;
+            position: relative;
+            z-index: 2;
         }
 
         .split-section {
@@ -134,7 +153,7 @@ if (!isset($_SESSION['username'])):
         }
 
         .split-section:first-child {
-            border-right: 1px solid #eee;
+            border-right: 1px solid rgba(238, 238, 238, 0.8);
         }
 
         .section-title {
@@ -156,7 +175,8 @@ if (!isset($_SESSION['username'])):
             font-weight: 500;
         }
 
-        .form-group input, .form-group select {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -165,7 +185,8 @@ if (!isset($_SESSION['username'])):
             transition: border-color 0.3s ease;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -188,6 +209,19 @@ if (!isset($_SESSION['username'])):
             background: #5a6fd6;
         }
 
+        .error-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff6b6b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
         @media (max-width: 768px) {
             .main-heading {
                 font-size: 3rem;
@@ -201,25 +235,12 @@ if (!isset($_SESSION['username'])):
 
             .split-section:first-child {
                 border-right: none;
-                border-bottom: 1px solid #eee;
+                border-bottom: 1px solid rgba(238, 238, 238, 0.8);
             }
 
             .split-section {
                 padding: 30px;
             }
-        }
-
-        .error-message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ff6b6b;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
         }
     </style>
 </head>
@@ -280,7 +301,7 @@ if (!isset($_SESSION['username'])):
                         <option value="">Select your role</option>
                         <option value="doner">Doner</option>
                         <option value="ngo">NGO</option>
-                        <option value="org">Orgranic farmers</option>
+                        <option value="org">Organic farmers</option>
                     </select>
                 </div>
                 <button type="submit" class="submit-btn" name="signup">Sign Up</button>
