@@ -184,7 +184,7 @@ $usertype = $user_data['usertype'];
                         <div class="item-details">
                             <p>Quantity: <?php echo $ngo_row['quantity']; ?></p>
                             <p>Expiry Date: <?php echo $ngo_row['expirydate']; ?></p>
-                            <p>Bought by NGO: <?php echo $ngo_row['ngo_username']; ?></p>
+                            <p>Sold by Doner: <?php echo $ngo_row['donorid']; ?></p>
                         </div>
                         <div class="item-footer">
                             <span>Food ID: <?php echo $ngo_row['foodid']; ?></span>
