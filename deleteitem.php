@@ -7,36 +7,42 @@ if (!isset($_SESSION['username'])) {
 $success_message = '';
 $error_message = '';
 
-// Handle delete request
-if (isset($_POST['delete_item'])) {
-    $conn = mysqli_connect("localhost", "root", "", "project");
-    
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
-    
-    $itemid = (int)$_POST['itemid'];
-    $username = $_SESSION['username'];
-    
-    // Only allow deletion if the item belongs to the user
-    $query = "DELETE FROM items WHERE itemid = $itemid AND user = '$username'";
-    
-    if (mysqli_query($conn, $query)) {
-        $success_message = "Item deleted successfully!";
-    } else {
-        $error_message = "Error deleting item: " . mysqli_error($conn);
-    }
-    
-    mysqli_close($conn);
-}
-
-// Fetch user's items
-$conn = mysqli_connect("localhost", "root", "", "project");
+// First get the userid from users table based on session credentials
+include "config.php";
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
-$username = $_SESSION['username'];
-$query = "SELECT * FROM items WHERE user = '$username' ORDER BY itemid DESC";
+
+$username = mysqli_real_escape_string($conn, $_SESSION['username']);
+$password = mysqli_real_escape_string($conn, $_SESSION['password']);
+
+$user_query = "SELECT userid FROM users WHERE username = '$username' AND userpassword = '$password'";
+$user_result = mysqli_query($conn, $user_query);
+
+if (!$user_result || mysqli_num_rows($user_result) == 0) {
+    header("Location: login.php");
+    exit();
+}
+
+$user_row = mysqli_fetch_assoc($user_result);
+$userid = $user_row['userid'];
+
+// Handle delete request
+if (isset($_POST['delete_food'])) {
+    $foodid = (int)$_POST['foodid'];
+    
+    // Only allow deletion if the food item belongs to the user
+    $query = "DELETE FROM food WHERE foodid = $foodid AND userid = $userid";
+    
+    if (mysqli_query($conn, $query)) {
+        $success_message = "Food item deleted successfully!";
+    } else {
+        $error_message = "Error deleting food item: " . mysqli_error($conn);
+    }
+}
+
+// Fetch user's food items
+$query = "SELECT * FROM food WHERE userid = $userid ORDER BY foodid DESC";
 $result = mysqli_query($conn, $query);
 mysqli_close($conn);
 ?>
@@ -46,7 +52,7 @@ mysqli_close($conn);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Items</title>
+    <title>My Food Items</title>
     <style>
         .container {
             max-width: 1200px;
@@ -89,15 +95,10 @@ mysqli_close($conn);
             margin-bottom: 10px;
         }
 
-        .item-description {
+        .item-meta {
             color: #666;
             margin-bottom: 15px;
-        }
-
-        .item-meta {
-            color: #888;
-            font-size: 0.9em;
-            margin-bottom: 15px;
+            line-height: 1.6;
         }
 
         .delete-btn {
@@ -107,6 +108,7 @@ mysqli_close($conn);
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
+            width: 100%;
         }
 
         .delete-btn:hover {
@@ -117,12 +119,25 @@ mysqli_close($conn);
             text-align: center;
             padding: 40px;
             color: #666;
+            grid-column: 1 / -1;
+        }
+
+        .expiry-warning {
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .expiry-near {
+            color: #ffc107;
+            font-weight: bold;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>My Items</h2>
+        <h2>My Food Items</h2>
         
         <?php if ($success_message): ?>
             <div class="message success-message"><?php echo $success_message; ?></div>
@@ -134,24 +149,35 @@ mysqli_close($conn);
 
         <div class="items-grid">
             <?php if (mysqli_num_rows($result) > 0): ?>
-                <?php while ($item = mysqli_fetch_assoc($result)): ?>
+                <?php while ($food = mysqli_fetch_assoc($result)): ?>
                     <div class="item-card">
-                        <div class="item-name"><?php echo htmlspecialchars($item['itemname']); ?></div>
-                        <div class="item-description"><?php echo htmlspecialchars($item['itemdescription']); ?></div>
+                        <div class="item-name"><?php echo htmlspecialchars($food['foodname']); ?></div>
                         <div class="item-meta">
-                            Age: <?php echo htmlspecialchars($item['yearold']); ?> years<br>
-                            Rating: <?php echo $item['ratingavg']; ?> (<?php echo $item['ratingcount']; ?> ratings)
+                            Quantity: <?php echo htmlspecialchars($food['quantity']); ?><br>
+                            Expiry Date: <?php echo date('d-m-Y', strtotime($food['expirydate'])); ?>
+                            
+                            <?php
+                            $expiry_date = strtotime($food['expirydate']);
+                            $today = strtotime('today');
+                            $days_until_expiry = floor(($expiry_date - $today) / (60 * 60 * 24));
+                            
+                            if ($days_until_expiry < 0): ?>
+                                <div class="expiry-warning">Expired!</div>
+                            <?php elseif ($days_until_expiry <= 7): ?>
+                                <div class="expiry-near">Expires in <?php echo $days_until_expiry; ?> days</div>
+                            <?php endif; ?>
                         </div>
-                        <form method="POST" action="" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                            <input type="hidden" name="itemid" value="<?php echo $item['itemid']; ?>">
-                            <button type="submit" name="delete_item" class="delete-btn">Delete Item</button>
+                        
+                        <form method="POST" action="" onsubmit="return confirm('Are you sure you want to delete this food item?');">
+                            <input type="hidden" name="foodid" value="<?php echo $food['foodid']; ?>">
+                            <button type="submit" name="delete_food" class="delete-btn">Delete Food Item</button>
                         </form>
                     </div>
                 <?php endwhile; ?>
             <?php else: ?>
                 <div class="no-items">
-                    <h3>No items found</h3>
-                    <p>You haven't added any items yet.</p>
+                    <h3>No food items found</h3>
+                    <p>You haven't added any food items yet.</p>
                 </div>
             <?php endif; ?>
         </div>

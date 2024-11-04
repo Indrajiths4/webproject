@@ -249,7 +249,6 @@ if (isset($_POST['rate_item'])) {
                 <a href="insert_item.php">Add Item</a>
                 <a href="update_item.php">Update Item</a>
                 <a href="delete_item.php">Delete Item</a>
-                <a href="leader_board.php">Leaderboard</a>
             </div>
             <div class="user-section">
                 <span>Welcome, <?php echo $_SESSION['username']; ?></span>
@@ -310,9 +309,7 @@ if (isset($_POST['rate_item'])) {
     else if($_SESSION['action']=="updateitem") {
         include "updateitem.php";
     }
-    else if($_SESSION['action']=="leaderboard") {
-        include "leaderboard.php";
-    }
+    
     ?>
 </body>
 </html>

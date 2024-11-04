@@ -9,7 +9,6 @@ $error_message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Connect to the database
-    //$conn = mysqli_connect("localhost", "root", "", "webproject");
     include "config.php";
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
@@ -27,12 +26,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $userid = $user_row['userid'];
         
         // Get form data
-        $foodname = $_POST['foodname'];
+        $foodname = mysqli_real_escape_string($conn, $_POST['foodname']);
         $quantity = (int)$_POST['quantity'];
+        $expirydate = mysqli_real_escape_string($conn, $_POST['expirydate']);
         
         // SQL statement to insert data
-        $query = "INSERT INTO food (foodname, quantity, userid) 
-                  VALUES ('$foodname', $quantity, $userid)";
+        $query = "INSERT INTO food (foodname, quantity, expirydate, userid) 
+                  VALUES ('$foodname', $quantity, '$expirydate', $userid)";
         
         // Execute the query
         if (mysqli_query($conn, $query)) {
@@ -75,7 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         input[type="text"],
-        input[type="number"] {
+        input[type="number"],
+        input[type="date"] {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
@@ -94,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .submit-btn:hover {
-            background-color: #45a049;
+            background-color: #7e41bd;
         }
 
         .success-message {
@@ -111,6 +112,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-bottom: 20px;
             background-color: #ffebee;
             border-radius: 4px;
+        }
+
+        /* Style for date input across browsers */
+        input[type="date"] {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: white;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -135,6 +147,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-group">
                 <label for="quantity">Quantity:</label>
                 <input type="number" id="quantity" name="quantity" min="1" max="100" required>
+            </div>
+
+            <div class="form-group">
+                <label for="expirydate">Expiry Date:</label>
+                <input type="date" id="expirydate" name="expirydate" 
+                       min="<?php echo date('Y-m-d'); ?>" required>
             </div>
 
             <button type="submit" class="submit-btn">Add Food Item</button>
