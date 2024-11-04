@@ -256,18 +256,15 @@ else if($_SESSION['role']=="ngo") {  ?>
     </nav>
 
     <?php
-    if($_SESSION['action']=="additem") {
-        include "ngo_food.php";
+    if($_SESSION['action']=="home") {
+        include "ngofood.php";
     }
-    else if($_SESSION['action']=="home"){
-        include "ngo_food.php"
-    ?>
-    <?php 
+    else if($_SESSION['action']=="ngocart"){
+        include "ngocart.php";
     }
-    else if($_SESSION['action']=="deleteitem") {
-        include "ngo_orders.php";
+    else if($_SESSION['action']=="ngoorders") {
+        include "ngoorders.php";
     }
-
     ?>
 </body>
 <?php } ?>
