@@ -178,7 +178,7 @@ $doner_userid = $user_data['userid'];
                 FROM orders o
                 JOIN users u ON o.userid = u.userid
                 WHERE o.donorid = '$doner_userid'
-                AND o.usertype = 'organic'
+                AND o.usertype = 'org'
             ");
 
             // Display the bought items
