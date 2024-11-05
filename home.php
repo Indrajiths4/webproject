@@ -252,7 +252,7 @@ else if($_SESSION['role']=="ngo") {  ?>
                 <a href="ngo_orders.php">Orders</a>
             </div>
             <div class="user-section">
-                <span>Welcome, <?php echo $_SESSION['username']; ?> NGO</span>
+                <span>Welcome, <?php echo $_SESSION['username']; ?> -  NGO</span>
                 <form action="" method="POST" style="margin: 0;">
                     <button type="submit" name="logout" class="logout-btn">Logout</button>
                 </form>
@@ -285,7 +285,7 @@ else if($_SESSION['role']=="org") {  ?>
                 <a href="ngo_orders.php">Orders</a>
             </div>
             <div class="user-section">
-                <span>Welcome, <?php echo $_SESSION['username']; ?> Organic Farmer</span>
+                <span>Welcome, <?php echo $_SESSION['username']; ?> - Organic Farmer</span>
                 <form action="" method="POST" style="margin: 0;">
                     <button type="submit" name="logout" class="logout-btn">Logout</button>
                 </form>

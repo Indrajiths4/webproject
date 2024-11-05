@@ -160,7 +160,7 @@ $usertype = $user_data['usertype'];
 </head>
 <body>
     <div class="container">
-        <h2 style="margin-bottom: 1.5rem;">Bought Items - NGO: <?php echo $username; ?></h2>
+        <h2 style="margin-bottom: 1.5rem;">Bought Items : </h2>
         <div class="items-grid">
             <?php
             // Get all the food items that have been bought by NGOs and Organic Farmers for the current doner
